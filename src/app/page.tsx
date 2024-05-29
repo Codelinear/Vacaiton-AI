@@ -63,15 +63,12 @@ export default function Home() {
 
       setLoading(true);
 
-      const response = await axios.post(
-        "/api/ai/ask",
-        {
-          destination,
-          reason,
-          startDate,
-          endDate,
-        },
-      );
+      const response = await axios.post("/api/ai/ask", {
+        destination,
+        reason,
+        startDate,
+        endDate,
+      });
 
       setLoading(false);
 
@@ -146,7 +143,7 @@ export default function Home() {
                         selected={field.value}
                         onSelect={field.onChange}
                         disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
+                          date <= new Date() || date < new Date("1900-01-01")
                         }
                         initialFocus
                       />
@@ -187,9 +184,13 @@ export default function Home() {
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
+                        disabled={(date) => {
+                          console.log(date);
+                          console.log(new Date());
+                          return (
+                            date <= new Date() || date < new Date("1900-01-01")
+                          );
+                        }}
                         initialFocus
                       />
                     </PopoverContent>
@@ -261,6 +262,6 @@ export default function Home() {
           </div>
         )}
       </section>
-      </main>
+    </main>
   );
 }

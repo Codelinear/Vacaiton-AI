@@ -1,4 +1,4 @@
-import { generateVacation } from "@/lib/agent";
+import { generateVacation } from "@/lib/actions/agent";
 import { NextRequest, NextResponse } from "next/server";
 
 export const maxDuration = 60;

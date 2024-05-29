@@ -1,3 +1,5 @@
+"use server";
+
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatAnthropic } from "@langchain/anthropic";
 
@@ -10,7 +12,7 @@ export const generateVacation = async (
   const model = new ChatAnthropic({
     temperature: 0,
     model: "claude-3-sonnet-20240229",
-    apiKey: process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY,
+    apiKey: process.env.ANTHROPIC_API_KEY,
     maxTokens: 1024,
   });
 

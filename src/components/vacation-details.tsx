@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Input } from "@/components/ui/input";
@@ -15,12 +17,21 @@ import { Calendar } from "@/components/ui/calendar";
 import CalendarIcon from "@/components/ui/icons/calender";
 import { cn } from "@/lib/utils";
 import { reasons } from "@/lib/constants/array";
+import { Inter } from "next/font/google";
+import { useToast } from "@/components/ui/use-toast";
+import { useStore } from "@/store";
 
-const vacationDetails = ({
+const inter = Inter({ subsets: ["latin"] });
+
+const VacationDetails = ({
   vacationForm,
 }: {
   vacationForm: UseFormReturn<VacationSchema, any, undefined>;
 }) => {
+  const changeContent = useStore((state) => state.changeContent);
+
+  const { toast } = useToast();
+
   return (
     <div className="max-w-3xl">
       <div className="mb-3">
@@ -40,7 +51,7 @@ const vacationDetails = ({
                         </legend>
 
                         <Button
-                          //   disabled={loading}
+                          type="button"
                           variant={"outline"}
                           className={cn(
                             "w-full pl-3 text-left font-normal mb-[0.35rem] text-[#E1FAFF80] hover:text-[#E1FAFF80] bg-transparent hover:bg-transparent p-0 border-0"
@@ -60,6 +71,7 @@ const vacationDetails = ({
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
+                      className={inter.className}
                       selected={field.value}
                       onSelect={field.onChange}
                       disabled={(date) =>
@@ -87,8 +99,8 @@ const vacationDetails = ({
                         </legend>
 
                         <Button
-                          //   disabled={loading}
                           variant={"outline"}
+                          type="button"
                           className={cn(
                             "w-full pl-3 text-left font-normal mb-[0.35rem] text-[#E1FAFF80] hover:text-[#E1FAFF80] bg-transparent hover:bg-transparent p-0 border-0"
                             // !field.value && "text-muted-foreground"
@@ -134,15 +146,15 @@ const vacationDetails = ({
                     type="single"
                     value={field.value}
                     onValueChange={field.onChange}
-                    className="flex flex-col"
+                    className="flex flex-col items-stretch"
                   >
-                    <div className="flex my-2 justify-start">
+                    <div className="flex my-2">
                       {reasons.map(
                         (element, index) =>
                           index % 2 === 0 && (
                             <ToggleGroupItem
                               key={element.id}
-                              className="font-normal w-full mx-2 backdrop-blur-3xl hover:bg-[#ffffff0d] hover:text-[#e1faff7f] text-base py-6 px-6 rounded-xl border data-[state=on]:bg-[#ffffff0d] data-[state=on]:text-[#e1faff] border-[#B2B2B2] data-[state=on]:border-white bg-[#ffffff0d] text-[#e1faff7f]"
+                              className="font-normal w-full mx-2 backdrop-blur-3xl hover:bg-[#ffffff0d] hover:text-[#e1faff7f] text-base py-6 px-3 rounded-xl border data-[state=on]:bg-[#ffffff0d] data-[state=on]:text-[#e1faff] border-[#B2B2B2] data-[state=on]:border-white bg-[#ffffff0d] text-[#e1faff7f]"
                               value={element.reason.toLowerCase()}
                             >
                               {element.reason}
@@ -150,13 +162,13 @@ const vacationDetails = ({
                           )
                       )}
                     </div>
-                    <div className="flex my-2 justify-start">
+                    <div className="flex my-2 justify-auto">
                       {reasons.map(
                         (element, index) =>
                           index % 2 !== 0 && (
                             <ToggleGroupItem
                               key={element.id}
-                              className="font-normal w-full mx-2 backdrop-blur-3xl hover:bg-[#ffffff0d] hover:text-[#e1faff7f] text-base py-6 px-6 rounded-xl border data-[state=on]:bg-[#ffffff0d] data-[state=on]:text-[#e1faff] border-[#B2B2B2] data-[state=on]:border-white bg-[#ffffff0d] text-[#e1faff7f]"
+                              className="font-normal w-full mx-2 backdrop-blur-3xl hover:bg-[#ffffff0d] hover:text-[#e1faff7f] text-base py-6 px-3 rounded-xl border data-[state=on]:bg-[#ffffff0d] data-[state=on]:text-[#e1faff] border-[#B2B2B2] data-[state=on]:border-white bg-[#ffffff0d] text-[#e1faff7f]"
                               value={element.reason.toLowerCase()}
                             >
                               {element.reason}
@@ -175,8 +187,16 @@ const vacationDetails = ({
       <div className="w-full flex justify-center">
         <Button
           className="bg-[#0F1599] mt-5 text-lg hover:bg-[#0F1599] rounded-full py-7 px-8"
-          // onClick={() => changeContent("vacationDetail")}
-          type="button"
+          onClick={() =>
+            !vacationForm.getValues("startDate") ||
+            !vacationForm.getValues("endDate") ||
+            !vacationForm.getValues("reason")
+              ? toast({
+                  description: "Please enter your preferences.",
+                })
+              : changeContent("vacation")
+          }
+          type="submit"
         >
           Generate Itinerary
         </Button>
@@ -185,4 +205,4 @@ const vacationDetails = ({
   );
 };
 
-export default vacationDetails;
+export default VacationDetails;

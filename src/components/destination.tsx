@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { VacationSchema } from "@/types";
 import { UseFormReturn } from "react-hook-form";
+import { useToast } from "@/components/ui/use-toast";
 import { useStore } from "@/store";
 
 const Destination = ({
@@ -14,6 +15,8 @@ const Destination = ({
   vacationForm: UseFormReturn<VacationSchema, any, undefined>;
 }) => {
   const changeContent = useStore((state) => state.changeContent);
+
+  const { toast } = useToast();
 
   return (
     <div className="flex items-center">
@@ -26,6 +29,7 @@ const Destination = ({
               <Input
                 {...field}
                 className="ring-offset-0 text-lg h-auto rounded-full py-3 px-8 placeholder:text-[#e1faff7f] border mr-5 w-96 backdrop-blur-3xl border-[#B2B2B2] bg-[#ffffff0d] focus-visible:ring-offset-0 transition duration-200"
+                autoCorrect="off"
                 placeholder="Enter the destination"
                 required
               />
@@ -36,7 +40,13 @@ const Destination = ({
 
       <Button
         className="bg-[#0F1599] text-lg hover:bg-[#0F1599] rounded-full py-7 px-8"
-        onClick={() => changeContent("vacationDetail")}
+        onClick={() =>
+          !vacationForm.getValues("destination")
+            ? toast({
+                description: "Please enter the destination.",
+              })
+            : changeContent("vacationDetail")
+        }
         type="button"
       >
         Start Planning

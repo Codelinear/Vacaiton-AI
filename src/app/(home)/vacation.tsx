@@ -3,7 +3,7 @@
 import axios from "axios";
 import Destination from "@/components/destination";
 import VacationDetails from "@/components/vacation-details";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import React, { ReactNode, useCallback, useRef } from "react";
 import { VacationSchema } from "@/types";
 import { vacationSchema } from "@/lib/validator";
@@ -14,7 +14,8 @@ import { cn } from "@/lib/utils";
 import { useStore } from "@/store";
 import { inriaSerif } from "@/lib/font";
 import BgVector from "@/components/ui/icons/bg-vector";
-import Image from "next/image";
+import VacationResponse from "@/components/vacation-response";
+import { useCompletion } from "ai/react";
 
 const Vacation = () => {
   const contentType = useStore((state) => state.contentType);
@@ -28,8 +29,42 @@ const Vacation = () => {
     },
   });
 
+  const { completion, handleSubmit, isLoading } = useCompletion({
+    api: "/api/ai/ask",
+    body: {
+      destination: vacationForm.getValues("destination"),
+      startDate: vacationForm.getValues("startDate"),
+      endDate: vacationForm.getValues("endDate"),
+      reason: vacationForm.getValues("reason"),
+    },
+  });
+
   const headingRef = useRef<ReactNode>(<></>);
   const vacationRef = useRef<ReactNode>(<></>);
+
+  const onSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      console.log("form submitted");
+      console.log(
+        vacationForm.getValues("startDate"),
+        vacationForm.getValues("endDate"),
+        vacationForm.getValues("reason")
+      );
+
+      if (
+        !vacationForm.getValues("startDate") ||
+        !vacationForm.getValues("endDate") ||
+        !vacationForm.getValues("reason")
+      ) {
+        return;
+      }
+
+      handleSubmit(e);
+    },
+    [handleSubmit, vacationForm]
+  );
 
   if (contentType === "destination") {
     headingRef.current = (
@@ -46,20 +81,15 @@ const Vacation = () => {
     );
     vacationRef.current = <VacationDetails vacationForm={vacationForm} />;
   } else {
-    headingRef.current = "";
-    vacationRef.current = <Destination vacationForm={vacationForm} />;
+    headingRef.current = (
+      <h1 className={cn(inriaSerif.className, `text-5xl mt-10`)}>
+        Here’s your itinerary
+      </h1>
+    );
+    vacationRef.current = (
+      <VacationResponse response={completion} isLoading={isLoading} />
+    );
   }
-
-  const onSubmit = useCallback(async (values: VacationSchema) => {
-    const { destination, reason, startDate, endDate } = values;
-
-    const response = await axios.post("/api/ai/ask", {
-      destination,
-      reason,
-      startDate,
-      endDate,
-    });
-  }, []);
 
   return (
     <main className="h-screen relative overflow-hidden w-full flex items-center justify-center">
@@ -79,10 +109,7 @@ const Vacation = () => {
       <section className="flex absolute z-[1] flex-col items-center justify-center">
         {headingRef.current && headingRef.current}
         <Form {...vacationForm}>
-          <form
-            onSubmit={vacationForm.handleSubmit(onSubmit)}
-            className="my-10"
-          >
+          <form onSubmit={onSubmit} className="my-10">
             {vacationRef.current}
           </form>
         </Form>

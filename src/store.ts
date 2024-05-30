@@ -10,5 +10,5 @@ interface AppState {
 export const useStore = create<AppState>((set) => ({
   contentType: "destination",
   changeContent: (contentType: "destination" | "vacationDetail" | "vacation") =>
-    set((state) => ({ contentType })),
+    set(() => ({ contentType })),
 }));

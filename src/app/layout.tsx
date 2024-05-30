@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { graphik } from "@/lib/font";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn(graphik.className, "bg-[#00020C] text-[#E1FAFF]")}>{children}</body>
+      <body className={cn(graphik.className, "bg-[#00020C] text-[#E1FAFF]")}>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

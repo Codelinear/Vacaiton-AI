@@ -24,9 +24,9 @@ const BgVector = ({ className }: { className: string }) => {
           width="3156.37"
           height="1844.6"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -46,10 +46,10 @@ const BgVector = ({ className }: { className: string }) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(946.054 1233.04) rotate(-152.153) scale(1328.71 2075.23)"
         >
-          <stop stop-color="#C7EEFF" />
-          <stop offset="0.207516" stop-color="#82C3FF" />
-          <stop offset="0.555417" stop-color="#1D46AE" />
-          <stop offset="0.883901" stop-color="#121676" />
+          <stop stopColor="#C7EEFF" />
+          <stop offset="0.207516" stopColor="#82C3FF" />
+          <stop offset="0.555417" stopColor="#1D46AE" />
+          <stop offset="0.883901" stopColor="#121676" />
         </radialGradient>
       </defs>
     </svg>

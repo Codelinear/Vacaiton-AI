@@ -10,19 +10,19 @@ export const reasons = [
   },
   {
     id: uuidv4(),
-    reason: "A romantic getaway",
-  },
-  {
-    id: uuidv4(),
     reason: "An adventurous trip",
   },
   {
     id: uuidv4(),
-    reason: "A family vacation",
+    reason: "Solo travel",
   },
   {
     id: uuidv4(),
-    reason: "Solo travel",
+    reason: "A romantic getaway",
+  },
+  {
+    id: uuidv4(),
+    reason: "A family vacation",
   },
   {
     id: uuidv4(),

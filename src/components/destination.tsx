@@ -28,9 +28,20 @@ const Destination = ({
             <FormControl>
               <Input
                 {...field}
-                className="ring-offset-0 text-lg h-auto rounded-full py-3 px-8 placeholder:text-[#e1faff7f] border mr-5 w-96 backdrop-blur-3xl border-[#B2B2B2] bg-[#ffffff0d] focus-visible:ring-offset-0 transition duration-200"
-                autoCorrect="off"
+                className="ring-offset-0 text-lg h-auto rounded-full py-3 px-8 placeholder:text-[#e1faff7f] border mr-5 w-96 backdrop-blur-3xl border-[#B2B2B2] bg-[#ffffff0d] focus-visible:ring-offset-0 selection:bg-blue-300 transition duration-200"
+                autoComplete="off"
                 placeholder="Enter the destination"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    if (!vacationForm.getValues("destination")) {
+                      toast({
+                        description: "Please enter the destination.",
+                      });
+                    } else {
+                      changeContent("vacationDetail");
+                    }
+                  }
+                }}
                 required
               />
             </FormControl>

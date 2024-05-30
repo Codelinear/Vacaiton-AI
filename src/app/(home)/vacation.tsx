@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import Destination from "@/components/destination";
 import VacationDetails from "@/components/vacation-details";
 import { Form } from "@/components/ui/form";
@@ -15,10 +14,13 @@ import { useStore } from "@/store";
 import { inriaSerif } from "@/lib/font";
 import BgVector from "@/components/ui/icons/bg-vector";
 import VacationResponse from "@/components/vacation-response";
+import { useToast } from "@/components/ui/use-toast";
 import { useCompletion } from "ai/react";
 
 const Vacation = () => {
   const contentType = useStore((state) => state.contentType);
+  const changeContent = useStore((state) => state.changeContent);
+  const setResponseLoading = useStore((state) => state.setResponseLoading);
 
   const vacationForm = useForm<z.infer<typeof vacationSchema>>({
     resolver: zodResolver(vacationSchema),
@@ -29,41 +31,41 @@ const Vacation = () => {
     },
   });
 
-  const { completion, handleSubmit, isLoading } = useCompletion({
+  const { completion, complete, isLoading } = useCompletion({
     api: "/api/ai/ask",
     body: {
-      destination: vacationForm.getValues("destination"),
       startDate: vacationForm.getValues("startDate"),
       endDate: vacationForm.getValues("endDate"),
       reason: vacationForm.getValues("reason"),
     },
+    onResponse: () => {
+      setResponseLoading(false);
+    },
   });
+
+  const { toast } = useToast();
 
   const headingRef = useRef<ReactNode>(<></>);
   const vacationRef = useRef<ReactNode>(<></>);
 
   const onSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
+    async (values: VacationSchema) => {
+      const { destination, startDate, endDate } = values;
 
-      console.log("form submitted");
-      console.log(
-        vacationForm.getValues("startDate"),
-        vacationForm.getValues("endDate"),
-        vacationForm.getValues("reason")
-      );
-
-      if (
-        !vacationForm.getValues("startDate") ||
-        !vacationForm.getValues("endDate") ||
-        !vacationForm.getValues("reason")
-      ) {
+      if (new Date(startDate) > new Date(endDate)) {
+        toast({
+          description: "Start Date must be lower than End Date.",
+        });
         return;
       }
 
-      handleSubmit(e);
+      changeContent("vacation");
+
+      setResponseLoading(true);
+
+      await complete(destination);
     },
-    [handleSubmit, vacationForm]
+    [changeContent, setResponseLoading]
   );
 
   if (contentType === "destination") {
@@ -87,7 +89,11 @@ const Vacation = () => {
       </h1>
     );
     vacationRef.current = (
-      <VacationResponse response={completion} isLoading={isLoading} />
+      <VacationResponse
+        isLoading={isLoading}
+        vacationForm={vacationForm}
+        response={completion}
+      />
     );
   }
 
@@ -109,7 +115,10 @@ const Vacation = () => {
       <section className="flex absolute z-[1] flex-col items-center justify-center">
         {headingRef.current && headingRef.current}
         <Form {...vacationForm}>
-          <form onSubmit={onSubmit} className="my-10">
+          <form
+            onSubmit={vacationForm.handleSubmit(onSubmit)}
+            className="my-10"
+          >
             {vacationRef.current}
           </form>
         </Form>

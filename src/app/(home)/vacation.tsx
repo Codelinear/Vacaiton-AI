@@ -25,7 +25,7 @@ const Vacation = () => {
     mode: "onSubmit",
     defaultValues: {
       destination: "",
-      reason: "business",
+      reason: "",
     },
   });
 

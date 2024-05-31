@@ -140,12 +140,12 @@ const VacationDetails = ({
                     type="single"
                     value={field.value}
                     onValueChange={field.onChange}
-                    className="grid grid-cols-2 place-items-center lg:grid-cols-3 md:gap-3 lg:gap-5 grid-rows-3 lg:grid-rows-2"
+                    className="grid grid-cols-2 self-center justify-self-center lg:grid-cols-3 md:gap-3 lg:gap-5 grid-rows-3 lg:grid-rows-2"
                   >
                     {reasons.map((element) => (
                       <ToggleGroupItem
                         key={element.id}
-                        className="font-normal w-full mx-2 backdrop-blur-3xl hover:bg-[#ffffff0d] hover:text-[#e1faff7f] text-xs md:text-sm lg:text-base py-6 px-3 rounded-xl border data-[state=on]:bg-[#ffffff0d] data-[state=on]:text-[#e1faff] border-[#B2B2B2] data-[state=on]:border-white bg-[#ffffff0d] text-[#e1faff7f]"
+                        className="font-normal w-full mx-2 justify-self-center backdrop-blur-3xl hover:bg-[#ffffff0d] hover:text-[#e1faff7f] text-xs md:text-sm lg:text-base py-6 px-3 rounded-xl border data-[state=on]:bg-[#ffffff0d] data-[state=on]:text-[#e1faff] border-[#B2B2B2] data-[state=on]:border-white bg-[#ffffff0d] text-[#e1faff7f]"
                         value={element.reason.toLowerCase()}
                       >
                         {element.reason}

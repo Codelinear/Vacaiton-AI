@@ -31,17 +31,17 @@ const VacationDetails = ({
   return (
     <div className="w-full overflow-y-scroll pb-5 h-[60vh]">
       <div className="mb-3">
-        <h3 className="text-base mb-5">How long is your vacation?</h3>
-        <div className="flex md:flex-row flex-col justify-center">
+        <h3 className="text-base md:text-start text-center mb-5">How long is your vacation?</h3>
+        <div className="flex md:flex-row flex-col max-md:items-center justify-center">
           <FormField
             control={vacationForm.control}
             name="startDate"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-1/2">
+              <FormItem className="flex flex-col w-80 md:w-1/2">
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
-                      <fieldset className="border w-60 md:w-full backdrop-blur-3xl bg-[#ffffff0d] px-5 lg:px-8 border-[#B2B2B2] rounded-full cursor-pointer">
+                      <fieldset className="border w-full backdrop-blur-3xl bg-[#ffffff0d] px-5 lg:px-8 border-[#B2B2B2] rounded-full cursor-pointer">
                         <legend className="text-start text-xs px-0.5 pointer-events-none">
                           Start Date
                         </legend>
@@ -84,11 +84,11 @@ const VacationDetails = ({
             control={vacationForm.control}
             name="endDate"
             render={({ field }) => (
-              <FormItem className="flex flex-col md:mt-0 mt-3 md:ml-3 lg:ml-5 w-1/2">
+              <FormItem className="flex flex-col md:mt-0 mt-3 md:ml-3 lg:ml-5 w-80 md:w-1/2">
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
-                      <fieldset className="border w-60 md:w-full backdrop-blur-3xl bg-[#ffffff0d] px-5 lg:px-8 border-[#B2B2B2] rounded-full cursor-pointer">
+                      <fieldset className="border w-full backdrop-blur-3xl bg-[#ffffff0d] px-5 lg:px-8 border-[#B2B2B2] rounded-full cursor-pointer">
                         <legend className="text-start text-xs px-0.5 pointer-events-none">
                           End Date
                         </legend>
@@ -129,8 +129,8 @@ const VacationDetails = ({
           />
         </div>
         <div className="mt-9">
-          <h3 className="text-base mb-3">What are you looking for?</h3>
-          <div className="flex items-center">
+          <h3 className="text-base mb-5 md:mb-3 md:text-start text-center">What are you looking for?</h3>
+          <div className="flex items-center justify-center">
             <FormField
               control={vacationForm.control}
               name="reason"

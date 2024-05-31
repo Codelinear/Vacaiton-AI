@@ -38,10 +38,10 @@ const VacationResponse = ({
   }
 
   return (
-    <div className="relative bg-[#FFFFFF0D] p-10 w-[50rem] h-[70vh] rounded-xl">
-      <div className="absolute rounded-full p-3 bg-[#060A24B2] left-1/2 -translate-x-1/2 bottom-0 backdrop-blur-3xl translate-y-1/2 flex justify-between w-4/5 items-center">
+    <div className="relative bg-[#FFFFFF0D] p-10 w-[85vw] min-[900px]:w-[50rem] h-[60vh] min-[900px]:h-[69vh] rounded-xl">
+      <div className="absolute rounded-full p-3 bg-[#060A24B2] left-1/2 -translate-x-1/2 bottom-0 backdrop-blur-3xl translate-y-1/2 flex justify-between items-center">
         <Button
-          className="bg-[#0F1599] text-base hover:bg-[#0F1599] rounded-full py-6 px-5"
+          className="bg-[#0F1599] text-base hover:bg-[#0F1599] rounded-full min-[900px]:py-6 min-[900px]:px-5"
           onClick={() => {
             changeContent("destination");
 
@@ -55,7 +55,9 @@ const VacationResponse = ({
           {responseItems.map((element) => (
             <div
               key={element.id}
-              className="mx-3 flex items-center hover:opacity-100 opacity-80 cursor-pointer transition duration-300"
+              className={`mx-3  ${
+                element.text === "Download this" ? "" : "max-[900px]:hidden"
+              } flex items-center hover:opacity-100 opacity-80 cursor-pointer transition duration-300`}
               onClick={() => {
                 if (element.text === "Download this") {
                   if (textRef.current) {
@@ -90,8 +92,24 @@ const VacationResponse = ({
                 }
               }}
             >
-              {element.icon}
-              <span className="ml-2 text-sm font-normal">{element.text}</span>
+              <div
+                className={`${
+                  element.text === "Download this" ? "" : "max-[900px]:hidden"
+                }`}
+              >
+                {element.icon}
+              </div>
+              <span
+                className={`ml-2 ${
+                  element.text === "Download this"
+                    ? "w-24"
+                    : element.text === "I like this"
+                    ? "w-[3.5rem]"
+                    : "w-[4.5rem]"
+                } text-sm max-[900px]:hidden font-normal`}
+              >
+                {element.text}
+              </span>
             </div>
           ))}
         </div>

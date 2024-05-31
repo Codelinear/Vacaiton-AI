@@ -70,21 +70,26 @@ const Vacation = () => {
 
   if (contentType === "destination") {
     headingRef.current = (
-      <h1 className={cn(inriaSerif.className, `text-6xl mb-2`)}>
+      <h1 className={cn(inriaSerif.className, `text-center text-3xl sm:text-5xl mx-5 md:text-6xl mb-2`)}>
         Let’s plan your vacation
       </h1>
     );
     vacationRef.current = <Destination vacationForm={vacationForm} />;
   } else if (contentType === "vacationDetail") {
     headingRef.current = (
-      <h1 className={cn(inriaSerif.className, `text-5xl mt-10`)}>
+      <h1 className={cn(inriaSerif.className, `text-center text-3xl md:text-4xl lg:text-5xl mx-5 mt-32 xl:mt-10`)}>
         Tell us more about your vacation
       </h1>
     );
     vacationRef.current = <VacationDetails vacationForm={vacationForm} />;
   } else {
     headingRef.current = (
-      <h1 className={cn(inriaSerif.className, `text-5xl mt-10`)}>
+      <h1
+        className={cn(
+          inriaSerif.className,
+          `text-center text-3xl md:text-4xl max-[900px]:mt-20 lg:text-5xl mt-10`
+        )}
+      >
         Here’s your itinerary
       </h1>
     );
@@ -117,7 +122,7 @@ const Vacation = () => {
         <Form {...vacationForm}>
           <form
             onSubmit={vacationForm.handleSubmit(onSubmit)}
-            className="my-10"
+            className={`my-10 ${contentType === "vacationDetail" && "w-[80vw] md:w-[30rem] lg:w-[40rem]"}`}
           >
             {vacationRef.current}
           </form>

@@ -29,10 +29,10 @@ const VacationDetails = ({
     !vacationForm.getValues("reason");
 
   return (
-    <div className="max-w-3xl">
+    <div className="w-full overflow-y-scroll pb-5 h-[60vh]">
       <div className="mb-3">
         <h3 className="text-base mb-5">How long is your vacation?</h3>
-        <div className="flex items-center">
+        <div className="flex md:flex-row flex-col justify-center">
           <FormField
             control={vacationForm.control}
             name="startDate"
@@ -41,7 +41,7 @@ const VacationDetails = ({
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
-                      <fieldset className="border w-full backdrop-blur-3xl bg-[#ffffff0d] px-8 border-[#B2B2B2] rounded-full cursor-pointer">
+                      <fieldset className="border w-60 md:w-full backdrop-blur-3xl bg-[#ffffff0d] px-5 lg:px-8 border-[#B2B2B2] rounded-full cursor-pointer">
                         <legend className="text-start text-xs px-0.5 pointer-events-none">
                           Start Date
                         </legend>
@@ -84,11 +84,11 @@ const VacationDetails = ({
             control={vacationForm.control}
             name="endDate"
             render={({ field }) => (
-              <FormItem className="flex flex-col ml-5 w-1/2">
+              <FormItem className="flex flex-col md:mt-0 mt-3 md:ml-3 lg:ml-5 w-1/2">
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
-                      <fieldset className="border w-full backdrop-blur-3xl bg-[#ffffff0d] px-8 border-[#B2B2B2] rounded-full cursor-pointer">
+                      <fieldset className="border w-60 md:w-full backdrop-blur-3xl bg-[#ffffff0d] px-5 lg:px-8 border-[#B2B2B2] rounded-full cursor-pointer">
                         <legend className="text-start text-xs px-0.5 pointer-events-none">
                           End Date
                         </legend>
@@ -140,12 +140,12 @@ const VacationDetails = ({
                     type="single"
                     value={field.value}
                     onValueChange={field.onChange}
-                    className="grid grid-cols-3 gap-5 grid-rows-2"
+                    className="grid grid-cols-2 place-items-center lg:grid-cols-3 md:gap-3 lg:gap-5 grid-rows-3 lg:grid-rows-2"
                   >
                     {reasons.map((element) => (
                       <ToggleGroupItem
                         key={element.id}
-                        className="font-normal w-full mx-2 backdrop-blur-3xl hover:bg-[#ffffff0d] hover:text-[#e1faff7f] text-base py-6 px-3 rounded-xl border data-[state=on]:bg-[#ffffff0d] data-[state=on]:text-[#e1faff] border-[#B2B2B2] data-[state=on]:border-white bg-[#ffffff0d] text-[#e1faff7f]"
+                        className="font-normal w-full mx-2 backdrop-blur-3xl hover:bg-[#ffffff0d] hover:text-[#e1faff7f] text-xs md:text-sm lg:text-base py-6 px-3 rounded-xl border data-[state=on]:bg-[#ffffff0d] data-[state=on]:text-[#e1faff] border-[#B2B2B2] data-[state=on]:border-white bg-[#ffffff0d] text-[#e1faff7f]"
                         value={element.reason.toLowerCase()}
                       >
                         {element.reason}
@@ -161,7 +161,7 @@ const VacationDetails = ({
 
       <div className="w-full flex justify-center">
         <Button
-          className="bg-[#0F1599] mt-5 text-lg hover:bg-[#0F1599] rounded-full py-7 px-8"
+          className="bg-[#0F1599] mt-5 text-lg sm:text-lg hover:bg-[#0F1599] rounded-full py-4 px-5 sm:py-7 sm:px-8"
           disabled={isMissingField}
           type="submit"
         >

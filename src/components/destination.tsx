@@ -19,7 +19,7 @@ const Destination = ({
   const { toast } = useToast();
 
   return (
-    <div className="flex items-center">
+    <div className="flex px-7 max-[464px]:flex-col justify-center items-center">
       <FormField
         control={vacationForm.control}
         name="destination"
@@ -28,7 +28,7 @@ const Destination = ({
             <FormControl>
               <Input
                 {...field}
-                className="ring-offset-0 text-lg h-auto rounded-full py-3 px-8 placeholder:text-[#e1faff7f] border mr-5 w-96 backdrop-blur-3xl border-[#B2B2B2] bg-[#ffffff0d] focus-visible:ring-offset-0 selection:bg-blue-300 transition duration-200"
+                className="ring-offset-0 text-sm sm:text-lg h-auto rounded-full py-2 sm:py-3 px-5 sm:px-8 placeholder:text-[#e1faff7f] border m-2 w-60 sm:w-96 backdrop-blur-3xl border-[#B2B2B2] bg-[#ffffff0d] focus-visible:ring-offset-0 selection:bg-blue-300 transition duration-200"
                 autoComplete="off"
                 placeholder="Enter the destination"
                 onKeyDown={(e) => {
@@ -50,7 +50,7 @@ const Destination = ({
       />
 
       <Button
-        className="bg-[#0F1599] text-lg hover:bg-[#0F1599] rounded-full py-7 px-8"
+        className="bg-[#0F1599] text-sm m-3 max-[464px]:w-60 sm:text-lg hover:bg-[#0F1599] rounded-full py-4 px-5 sm:py-7 sm:px-8"
         onClick={() =>
           !vacationForm.getValues("destination")
             ? toast({

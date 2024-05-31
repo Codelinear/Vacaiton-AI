@@ -29,7 +29,7 @@ const VacationDetails = ({
     !vacationForm.getValues("reason");
 
   return (
-    <div className="w-full overflow-y-scroll pb-5 h-[60vh]">
+    <div className="w-full max-md:overflow-y-scroll pb-5 h-[60vh]">
       <div className="mb-3">
         <h3 className="text-base md:text-start text-center mb-5">How long is your vacation?</h3>
         <div className="flex md:flex-row flex-col max-md:items-center justify-center">

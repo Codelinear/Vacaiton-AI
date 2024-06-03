@@ -12,6 +12,8 @@ export const POST = async (req: NextRequest) => {
       apiKey: process.env.OPENAI_API_KEY,
     });
 
+    console.log(process.env.OPENAI_API_KEY)
+
     const systemPrompt = `Plan a ${reason} vacation itinerary for me from ${
       startDate.toString().split("T")[0]
     } to ${

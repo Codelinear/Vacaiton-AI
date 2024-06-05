@@ -1,32 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
-import { StreamingTextResponse, streamText } from "ai";
-import { createOpenAI } from '@ai-sdk/openai';
+import { generateText } from "ai";
+import { createOpenAI } from "@ai-sdk/openai";
+import { vacationSystemPrompt } from "@/lib/prompts";
 
 export const maxDuration = 60;
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { prompt, endDate, reason, startDate } = await req.json();
+    const { destination, endDate, reason, startDate } = await req.json();
 
     const openai = createOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    console.log(process.env.OPENAI_API_KEY)
-
-    const systemPrompt = `Plan a ${reason} vacation itinerary for me from ${
-      startDate.toString().split("T")[0]
-    } to ${
-      endDate.toString().split("T")[0]
-    } in ${prompt}. Include popular places to visit and activities to do. You must give the response in a list format so that the plan is visually understandable. If someone gives an invalid destination which is not there then you'll simply say, "I'm not getting the valid destination to design a vacation."`;
-
-    const response = await streamText({
+    const response = await generateText({
       model: openai("gpt-3.5-turbo-0125"),
       temperature: 0,
-      prompt: systemPrompt,
+      system: vacationSystemPrompt,
+      prompt: `Plan a vacation itinerary for me. Here are all the parameters:
+      \n\n
+      Destination: ${destination}
+      \n
+      Reason: ${reason}
+      \n
+      Start Date: ${startDate.toString().split("T")[0]}
+      \n
+      End Date: ${endDate.toString().split("T")[0]}
+      `,
     });
 
-    return new StreamingTextResponse(response.toAIStream());
+    return NextResponse.json({
+      plan: JSON.parse(response.text),
+    });
+
+    // return new StreamingTextResponse(response.toAIStream());
   } catch (error: any) {
     console.log(error);
     return NextResponse.json(

@@ -1,17 +1,14 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { responseItems } from "@/lib/constants/array";
-import { cn } from "@/lib/utils";
-import { graphik } from "@/lib/font";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { useStore } from "@/store";
 import { UseFormReturn } from "react-hook-form";
 import jsPDF from "jspdf";
 import { VacationSchema } from "@/types";
+import { v4 as uuidv4 } from "uuid";
+import Download from "@/components/ui/icons/download";
 
 const VacationResponse = ({
   isLoading,
@@ -19,29 +16,31 @@ const VacationResponse = ({
   vacationForm,
 }: {
   isLoading: boolean;
-  response: string;
+  response: { day: string; activities: string[] }[] | undefined;
   vacationForm: UseFormReturn<VacationSchema, any, undefined>;
 }) => {
   const changeContent = useStore((state) => state.changeContent);
-  const responseLoading = useStore((state) => state.responseLoading);
 
-  const textRef = useRef<HTMLPreElement | null>(null);
+  const textRef = useRef<HTMLDivElement | null>(null);
   const responseContainerRef = useRef<HTMLDivElement | null>(null);
 
-  if (isLoading) {
-    responseContainerRef.current?.scrollTo({
-      top:
-        responseContainerRef.current?.scrollHeight +
-        responseContainerRef.current?.offsetHeight,
-      behavior: "smooth",
-    });
-  }
+  useEffect(() => {
+    if (!isLoading) {
+      responseContainerRef.current?.scrollTo({
+        top:
+          responseContainerRef.current?.scrollHeight +
+          responseContainerRef.current?.offsetHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [isLoading]);
 
   return (
     <div className="relative bg-[#FFFFFF0D] p-10 w-[85vw] min-[900px]:w-[50rem] h-[60vh] min-[900px]:h-[69vh] rounded-xl">
       <div className="absolute rounded-full p-3 bg-[#060A24B2] left-1/2 -translate-x-1/2 bottom-0 backdrop-blur-3xl translate-y-1/2 flex justify-between items-center">
         <Button
           className="bg-[#0F1599] text-base hover:bg-[#0F1599] rounded-full min-[900px]:py-6 min-[900px]:px-5"
+          disabled={isLoading}
           onClick={() => {
             changeContent("destination");
 
@@ -52,73 +51,54 @@ const VacationResponse = ({
           Generate Another
         </Button>
         <div className="flex ml-10">
-          {responseItems.map((element) => (
-            <div
-              key={element.id}
-              className={`mx-3  ${
-                element.text === "Download this" ? "" : "max-[900px]:hidden"
-              } flex items-center hover:opacity-100 opacity-80 cursor-pointer transition duration-300`}
-              onClick={() => {
-                if (element.text === "Download this") {
-                  if (textRef.current) {
-                    const doc = new jsPDF();
-                    const text = textRef.current.innerText;
-                    const formattedText = text.replace(
-                      /\n\s*\n\s*\n+/g,
-                      "\n\n"
-                    );
-                    const pageWidth = doc.internal.pageSize.getWidth();
-                    const pageHeight = doc.internal.pageSize.getHeight();
-                    const margin = 10;
-                    const maxLineWidth = pageWidth - margin * 2;
-                    const lineHeight = 10;
-                    const lines = doc.splitTextToSize(
-                      formattedText,
-                      maxLineWidth
-                    );
-                    let cursorY = margin;
+          <div
+            className={`mx-3 max-[900px]:hidden flex items-center hover:opacity-100 opacity-80 cursor-pointer transition duration-300`}
+            onClick={() => {
+              if (isLoading) {
+                return;
+              }
 
-                    lines.forEach((line: string) => {
-                      if (cursorY + lineHeight > pageHeight - margin) {
-                        doc.addPage();
-                        cursorY = margin;
-                      }
-                      doc.text(line, margin, cursorY);
-                      cursorY += lineHeight;
-                    });
+              if (textRef.current) {
+                const doc = new jsPDF();
+                const text = textRef.current.innerText;
+                const formattedText = text.replace(/\n\s*\n\s*\n+/g, "\n\n");
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const margin = 10;
+                const maxLineWidth = pageWidth - margin * 2;
+                const lineHeight = 10;
+                const lines = doc.splitTextToSize(formattedText, maxLineWidth);
+                let cursorY = margin;
 
-                    doc.save("vacationPlan.pdf");
+                lines.forEach((line: string) => {
+                  if (cursorY + lineHeight > pageHeight - margin) {
+                    doc.addPage();
+                    cursorY = margin;
                   }
-                }
-              }}
-            >
-              <div
-                className={`${
-                  element.text === "Download this" ? "" : "max-[900px]:hidden"
-                }`}
-              >
-                {element.icon}
-              </div>
-              <span
-                className={`ml-2 ${
-                  element.text === "Download this"
-                    ? "w-24"
-                    : element.text === "I like this"
-                    ? "w-[3.5rem]"
-                    : "w-[4.5rem]"
-                } text-sm max-[900px]:hidden font-normal`}
-              >
-                {element.text}
-              </span>
+                  doc.text(line, margin, cursorY);
+                  cursorY += lineHeight;
+                });
+
+                doc.save("vacationPlan.pdf");
+              }
+            }}
+          >
+            <div>
+              <Download />
             </div>
-          ))}
+            <span
+              className={`ml-2 w-24 text-sm max-[900px]:hidden font-normal`}
+            >
+              Download this
+            </span>
+          </div>
         </div>
       </div>
       <div
         ref={responseContainerRef}
         className="overflow-scroll scrollbar-hide w-full h-full"
       >
-        {responseLoading ? (
+        {isLoading ? (
           Array.from({ length: 5 }).map((_, index) => (
             <Skeleton
               key={index + 1}
@@ -128,17 +108,20 @@ const VacationResponse = ({
             />
           ))
         ) : (
-          // pre tag for correct spacing
-          <pre
-            style={{ wordWrap: "break-word" }}
-            className={cn(
-              "overflow-x-auto whitespace-pre-wrap",
-              graphik.className
-            )}
-            ref={textRef}
-          >
-            <Markdown remarkPlugins={[remarkGfm]}>{response}</Markdown>
-          </pre>
+          <div ref={textRef}>
+            {response?.map((element) => (
+              <div key={uuidv4()}>
+                <h2 className="text-2xl mb-4 font-bold">{element.day}</h2>
+                <ul className="ml-6 mb-7 list-disc">
+                  {element.activities.map((activity) => (
+                    <li key={uuidv4()} className="my-3">
+                      {activity}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>

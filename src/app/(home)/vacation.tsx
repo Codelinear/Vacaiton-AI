@@ -3,7 +3,7 @@
 import Destination from "@/components/destination";
 import VacationDetails from "@/components/vacation-details";
 import { Form } from "@/components/ui/form";
-import React, { ReactNode, useCallback, useRef } from "react";
+import React, { ReactNode, useCallback, useRef, useState } from "react";
 import { VacationSchema } from "@/types";
 import { vacationSchema } from "@/lib/validator";
 import { useForm } from "react-hook-form";
@@ -15,11 +15,14 @@ import { inriaSerif } from "@/lib/font";
 import BgVector from "@/components/ui/icons/bg-vector";
 import VacationResponse from "@/components/vacation-response";
 import { useToast } from "@/components/ui/use-toast";
-import { useCompletion } from "ai/react";
+import axios from "axios";
 
 const Vacation = () => {
+  const [response, setResponse] = useState();
+
   const contentType = useStore((state) => state.contentType);
   const changeContent = useStore((state) => state.changeContent);
+  const responseLoading = useStore((state) => state.responseLoading);
   const setResponseLoading = useStore((state) => state.setResponseLoading);
 
   const vacationForm = useForm<z.infer<typeof vacationSchema>>({
@@ -31,18 +34,6 @@ const Vacation = () => {
     },
   });
 
-  const { completion, complete, isLoading } = useCompletion({
-    api: "/api/ai/ask",
-    body: {
-      startDate: vacationForm.getValues("startDate"),
-      endDate: vacationForm.getValues("endDate"),
-      reason: vacationForm.getValues("reason"),
-    },
-    onResponse: () => {
-      setResponseLoading(false);
-    },
-  });
-
   const { toast } = useToast();
 
   const headingRef = useRef<ReactNode>(<></>);
@@ -50,7 +41,7 @@ const Vacation = () => {
 
   const onSubmit = useCallback(
     async (values: VacationSchema) => {
-      const { destination, startDate, endDate } = values;
+      const { destination, startDate, endDate, reason } = values;
 
       if (new Date(startDate) > new Date(endDate)) {
         toast({
@@ -63,21 +54,40 @@ const Vacation = () => {
 
       setResponseLoading(true);
 
-      await complete(destination);
+      const { data } = await axios.post("/api/ai/ask", {
+        destination,
+        endDate,
+        reason,
+        startDate,
+      });
+
+      setResponseLoading(false);
+      
+      setResponse(data.plan.itinerary);
     },
-    [changeContent, setResponseLoading]
+    [changeContent, setResponseLoading, toast]
   );
 
   if (contentType === "destination") {
     headingRef.current = (
-      <h1 className={cn(inriaSerif.className, `text-center text-3xl sm:text-5xl mx-5 md:text-6xl mb-2`)}>
+      <h1
+        className={cn(
+          inriaSerif.className,
+          `text-center text-3xl sm:text-5xl mx-5 md:text-6xl mb-2`
+        )}
+      >
         Let’s plan your vacation
       </h1>
     );
     vacationRef.current = <Destination vacationForm={vacationForm} />;
   } else if (contentType === "vacationDetail") {
     headingRef.current = (
-      <h1 className={cn(inriaSerif.className, `text-center text-3xl md:text-4xl lg:text-5xl mx-5 mt-32 xl:mt-10`)}>
+      <h1
+        className={cn(
+          inriaSerif.className,
+          `text-center text-3xl md:text-4xl lg:text-5xl mx-5 mt-32 xl:mt-10`
+        )}
+      >
         Tell us more about your vacation
       </h1>
     );
@@ -95,9 +105,9 @@ const Vacation = () => {
     );
     vacationRef.current = (
       <VacationResponse
-        isLoading={isLoading}
+        isLoading={responseLoading}
         vacationForm={vacationForm}
-        response={completion}
+        response={response}
       />
     );
   }
@@ -122,7 +132,10 @@ const Vacation = () => {
         <Form {...vacationForm}>
           <form
             onSubmit={vacationForm.handleSubmit(onSubmit)}
-            className={`my-10 ${contentType === "vacationDetail" && "w-[80vw] md:w-[30rem] lg:w-[40rem]"}`}
+            className={`my-10 ${
+              contentType === "vacationDetail" &&
+              "w-[80vw] md:w-[30rem] lg:w-[40rem]"
+            }`}
           >
             {vacationRef.current}
           </form>

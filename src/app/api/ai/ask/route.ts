@@ -15,7 +15,6 @@ export const POST = async (req: NextRequest) => {
 
     const response = await generateText({
       model: openai("gpt-3.5-turbo-0125"),
-      temperature: 0,
       system: vacationSystemPrompt,
       prompt: `Plan a vacation itinerary for me. Here are all the parameters:
       \n\n

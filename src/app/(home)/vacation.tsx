@@ -15,10 +15,17 @@ import { inriaSerif } from "@/lib/font";
 import BgVector from "@/components/ui/icons/bg-vector";
 import VacationResponse from "@/components/vacation-response";
 import { useToast } from "@/components/ui/use-toast";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+import { currencies } from "@/lib/constants/array";
+import { Button } from "@/components/ui/button";
 
 const Vacation = () => {
   const [response, setResponse] = useState();
+  const [currency, setCurrency] = useState("USD");
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [budget, setBudget] = useState("");
 
   const contentType = useStore((state) => state.contentType);
   const changeContent = useStore((state) => state.changeContent);
@@ -62,7 +69,7 @@ const Vacation = () => {
       });
 
       setResponseLoading(false);
-      
+
       setResponse(data.plan.itinerary);
     },
     [changeContent, setResponseLoading, toast]
@@ -79,7 +86,65 @@ const Vacation = () => {
         Let’s plan your vacation
       </h1>
     );
-    vacationRef.current = <Destination vacationForm={vacationForm} />;
+    vacationRef.current = (
+      <>
+        <Destination vacationForm={vacationForm} />
+        <div className="flex px-7 max-[464px]:flex-col justify-center items-center">
+          <div className="ring-offset-0 text-sm sm:text-lg h-auto rounded-full py-2 sm:py-3 px-3 sm:px-5 placeholder:text-[#e1faff7f] border m-2 w-60 sm:w-96 backdrop-blur-3xl border-[#B2B2B2] bg-[#ffffff0d] focus-visible:ring-offset-0 selection:bg-blue-300 transition flex duration-200">
+            <select
+              disabled={suggestionsLoading}
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              className="bg-transparent cursor-pointer w-16 border-none scrollbar-hide outline-none mr-4"
+            >
+              {currencies.map((currency) => (
+                <option
+                  key={uuidv4()}
+                  value={currency}
+                  className="bg-black rounded-lg"
+                >
+                  {currency}
+                </option>
+              ))}
+            </select>
+
+            <input
+              disabled={suggestionsLoading}
+              className="bg-transparent border-none outline-none w-full"
+              type="number"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              placeholder="Enter the budget"
+            />
+          </div>
+          <Button
+            className="bg-[#0F1599] text-sm m-3 max-[464px]:w-60 sm:text-lg hover:bg-[#0F1599] rounded-full py-4 px-5 sm:py-7 sm:px-8"
+            disabled={budget === "" || suggestionsLoading}
+            onClick={async () => {
+              if (budget === "") {
+                toast({
+                  description: "Please enter the destination.",
+                });
+              } else {
+                setSuggestionsLoading(true);
+
+                const res = await axios.post("/api/ai/suggestions", {
+                  budget,
+                  currency,
+                });
+
+                setSuggestionsLoading(false);
+
+                setSuggestions(res.data.suggestions.destinations);
+              }
+            }}
+            type="button"
+          >
+            Suggest
+          </Button>
+        </div>
+      </>
+    );
   } else if (contentType === "vacationDetail") {
     headingRef.current = (
       <h1
@@ -128,6 +193,30 @@ const Vacation = () => {
         <BgVector className="rotate-[-27.77]" />
       </div>
       <section className="flex absolute z-[1] flex-col items-center justify-center">
+        {contentType === "destination" && (
+          <div className="max-w-3xl h-32 absolute left-1/2 -translate-x-1/2 top-[95%] w-full rounded-xl bg-transparent grid grid-cols-3 grid-rows-2 p-2 gap-2">
+            {suggestions?.map((element) => (
+              <span
+                key={uuidv4()}
+                data-value={element}
+                onClick={(e) => {
+                  const destination = (
+                    e.target as HTMLSpanElement
+                  ).getAttribute("data-value");
+
+                  if (!destination) {
+                    return;
+                  }
+
+                  vacationForm.setValue("destination", destination);
+                }}
+                className="border-2 cursor-pointer bg-[#ffffff0d] rounded-lg flex items-center justify-center backdrop-blur-3xl"
+              >
+                {element}
+              </span>
+            ))}
+          </div>
+        )}
         {headingRef.current && headingRef.current}
         <Form {...vacationForm}>
           <form

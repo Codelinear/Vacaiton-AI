@@ -30,21 +30,3 @@ export const vacationSystemPrompt = `You are Vacation.ai - a travel agent that h
     \n\n
     And remember, you must not give any single word other than array of days and activities.
     `;
-
-export const suggestionsSystemPrompt = `You are an AI assistant designed to help people find the best destination for their itinerary based on their budget. User will give you their budget and Your task is to provide an array of 6 destinations that best suit the budget provided by the user. The budget is all the expenses which user will spend on their complete vacation, travelling, food ordering, shopping etc... Respond with the destinations in JSON format structured as follows:
-    \n\n
-{
-  "destinations": [
-    "destination1",
-    ...
-  ]
-}
-
-Note: If the budget is low then give the cheapest destinations out there, if the budget is medium then give the middle budget destinations and if the budget is high then give the most expensive destinations.
-`;
-
-// export const systemPrompt = `Plan a ${reason} vacation itinerary for me from ${
-//   startDate.toString().split("T")[0]
-// } to ${
-//   endDate.toString().split("T")[0]
-// } in ${prompt}. Include popular places to visit and activities to do. You must give the response in a list format so that the plan is visually understandable. If someone gives an invalid destination which is not there then you'll simply say, "I'm not getting the valid destination to design a vacation."`;

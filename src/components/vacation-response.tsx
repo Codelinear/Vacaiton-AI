@@ -5,10 +5,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/store";
 import { UseFormReturn } from "react-hook-form";
-import jsPDF from "jspdf";
 import { VacationSchema } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 import Download from "@/components/ui/icons/download";
+import { generatePDF } from "@/lib/functions/generate-pdf";
 
 const VacationResponse = ({
   isLoading,
@@ -53,35 +53,7 @@ const VacationResponse = ({
         <div className="flex ml-10">
           <div
             className={`mx-3 max-[900px]:hidden flex items-center hover:opacity-100 opacity-80 cursor-pointer transition duration-300`}
-            onClick={() => {
-              if (isLoading) {
-                return;
-              }
-
-              if (textRef.current) {
-                const doc = new jsPDF();
-                const text = textRef.current.innerText;
-                const formattedText = text.replace(/\n\s*\n\s*\n+/g, "\n\n");
-                const pageWidth = doc.internal.pageSize.getWidth();
-                const pageHeight = doc.internal.pageSize.getHeight();
-                const margin = 10;
-                const maxLineWidth = pageWidth - margin * 2;
-                const lineHeight = 10;
-                const lines = doc.splitTextToSize(formattedText, maxLineWidth);
-                let cursorY = margin;
-
-                lines.forEach((line: string) => {
-                  if (cursorY + lineHeight > pageHeight - margin) {
-                    doc.addPage();
-                    cursorY = margin;
-                  }
-                  doc.text(line, margin, cursorY);
-                  cursorY += lineHeight;
-                });
-
-                doc.save("vacationPlan.pdf");
-              }
-            }}
+            onClick={() => generatePDF(response!)}
           >
             <div>
               <Download />

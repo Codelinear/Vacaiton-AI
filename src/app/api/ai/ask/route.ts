@@ -31,10 +31,7 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({
       plan: JSON.parse(response.text),
     });
-
-    // return new StreamingTextResponse(response.toAIStream());
   } catch (error: any) {
-    console.log(error);
     return NextResponse.json(
       {
         message: error.message,

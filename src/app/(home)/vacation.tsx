@@ -41,29 +41,36 @@ const Vacation = () => {
 
   const onSubmit = useCallback(
     async (values: VacationSchema) => {
-      const { destination, startDate, endDate, reason } = values;
+      try {
+        const { destination, startDate, endDate, reason } = values;
 
-      if (new Date(startDate) > new Date(endDate)) {
-        toast({
-          description: "Start Date must be lower than End Date.",
+        if (new Date(startDate) > new Date(endDate)) {
+          toast({
+            description: "Start Date must be lower than End Date.",
+          });
+          return;
+        }
+
+        changeContent("vacation");
+
+        setResponseLoading(true);
+
+        const { data } = await axios.post("/api/ai/ask", {
+          destination,
+          endDate,
+          reason,
+          startDate,
         });
-        return;
+
+        setResponseLoading(false);
+
+        setResponse(data.plan.itinerary);
+      } catch (error) {
+        toast({
+          description: "Something went wrong. Please try again.",
+          variant: "destructive",
+        });
       }
-
-      changeContent("vacation");
-
-      setResponseLoading(true);
-
-      const { data } = await axios.post("/api/ai/ask", {
-        destination,
-        endDate,
-        reason,
-        startDate,
-      });
-
-      setResponseLoading(false);
-
-      setResponse(data.plan.itinerary);
     },
     [changeContent, setResponseLoading, toast]
   );
